@@ -16,7 +16,7 @@ function StaffDetail() {
   const { data } = useQuery({
     queryKey: ["staff-detail", id],
     queryFn: async () => {
-      const [{ data: s }, { data: refs }, { data: tr }] = await Promise.all([
+      const [{ data: s }, refs, { data: tr }] = await Promise.all([
         supabase.from("staff").select("*").eq("id", id).maybeSingle(),
         Promise.all([
           supabase.from("districts").select("id, name"),
