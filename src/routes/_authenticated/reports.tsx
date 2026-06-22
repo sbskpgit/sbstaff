@@ -42,9 +42,10 @@ function ReportsPage() {
     },
   });
 
+  type StaffRow = NonNullable<typeof data>["staff"][number];
   const groups = useMemo(() => {
-    if (!data) return [] as { key: string; rows: typeof data.staff }[];
-    const acc = new Map<string, typeof data.staff>();
+    if (!data) return [] as { key: string; rows: StaffRow[] }[];
+    const acc = new Map<string, StaffRow[]>();
     for (const s of data.staff) {
       let key = "—";
       switch (groupBy) {
