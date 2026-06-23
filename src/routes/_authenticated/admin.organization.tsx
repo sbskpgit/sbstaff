@@ -30,16 +30,61 @@ function OrgAdmin() {
         <h1 className="text-2xl font-bold">Organization</h1>
         <p className="text-sm text-muted-foreground">Manage circles, police stations and designations.</p>
       </div>
-      <Tabs defaultValue="circles">
-        <TabsList>
+      <Tabs defaultValue="branches">
+        <TabsList className="flex-wrap h-auto">
+          <TabsTrigger value="branches">Branches</TabsTrigger>
           <TabsTrigger value="circles">Circles</TabsTrigger>
           <TabsTrigger value="stations">Police Stations</TabsTrigger>
           <TabsTrigger value="designations">Designations</TabsTrigger>
         </TabsList>
+        <TabsContent value="branches"><BranchesPanel /></TabsContent>
         <TabsContent value="circles"><CirclesPanel /></TabsContent>
         <TabsContent value="stations"><StationsPanel /></TabsContent>
         <TabsContent value="designations"><DesignationsPanel /></TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+function BranchesPanel() {
+  const qc = useQueryClient();
+  const [name, setName] = useState("");
+  const [districtId, setDistrictId] = useState("");
+  const { data } = useQuery({
+    queryKey: ["org-branches"],
+    queryFn: async () => {
+      const [b, d] = await Promise.all([
+        supabase.from("branches").select("id, name, district_id").order("name"),
+        supabase.from("districts").select("id, name").order("display_order"),
+      ]);
+      return { branches: b.data ?? [], districts: d.data ?? [], dMap: new Map((d.data ?? []).map((x) => [x.id, x.name])) };
+    },
+  });
+  const add = async () => {
+    if (!name || !districtId) return toast.error("Name and district required");
+    const { error } = await supabase.from("branches").insert({ name, district_id: districtId } as never);
+    if (error) toast.error(error.message); else { setName(""); toast.success("Added"); qc.invalidateQueries({ queryKey: ["org-branches"] }); }
+  };
+  const del = async (id: string) => {
+    if (!confirm("Delete branch?")) return;
+    const { error } = await supabase.from("branches").delete().eq("id", id);
+    if (error) toast.error(error.message); else { toast.success("Deleted"); qc.invalidateQueries({ queryKey: ["org-branches"] }); }
+  };
+  return (
+    <div className="space-y-3 mt-4">
+      <div className="card-elevated p-3 grid sm:grid-cols-3 gap-2">
+        <div><Label className="text-xs text-muted-foreground">District / Office</Label>
+          <Select value={districtId} onValueChange={setDistrictId}><SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
+            <SelectContent>{data?.districts.map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <div><Label className="text-xs text-muted-foreground">Branch Name</Label><Input className="mt-1" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Political Branch" /></div>
+        <div className="flex items-end"><Button onClick={add}><Plus className="h-4 w-4 mr-1" />Add Branch</Button></div>
+      </div>
+      <div className="card-elevated overflow-x-auto"><Table>
+        <TableHeader><TableRow><TableHead>Branch</TableHead><TableHead>District / Office</TableHead><TableHead></TableHead></TableRow></TableHeader>
+        <TableBody>{data?.branches.map((b) => (<TableRow key={b.id}><TableCell className="font-medium">{b.name}</TableCell><TableCell>{data.dMap.get(b.district_id) ?? "—"}</TableCell><TableCell className="text-right"><Button size="icon" variant="ghost" onClick={() => del(b.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell></TableRow>))}</TableBody>
+      </Table></div>
     </div>
   );
 }

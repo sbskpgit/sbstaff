@@ -47,6 +47,41 @@ export type Database = {
         }
         Relationships: []
       }
+      branches: {
+        Row: {
+          created_at: string
+          display_order: number
+          district_id: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          district_id: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          district_id?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "branches_district_id_fkey"
+            columns: ["district_id"]
+            isOneToOne: false
+            referencedRelation: "districts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       circles: {
         Row: {
           created_at: string
