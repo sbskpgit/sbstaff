@@ -54,7 +54,8 @@ export function AppSidebar() {
               {main.map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton asChild isActive={pathname === item.url || pathname.startsWith(item.url + "/")}>
-                    <Link to={item.url} className="flex items-center gap-2">
+                    <Link to={item.url} onClick={closeOnMobile} className="flex items-center gap-2">
+
                       <item.icon className="h-4 w-4" />
                       {!collapsed && <span>{item.title}</span>}
                     </Link>
