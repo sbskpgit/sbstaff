@@ -24,10 +24,11 @@ const admin = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
-  const collapsed = state === "collapsed";
+  const { state, isMobile, setOpenMobile } = useSidebar();
+  const collapsed = state === "collapsed" && !isMobile;
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   const { isSuperAdmin, signOut, user } = useAuth();
+  const closeOnMobile = () => { if (isMobile) setOpenMobile(false); };
 
   return (
     <Sidebar collapsible="icon">
@@ -53,7 +54,8 @@ export function AppSidebar() {
               {main.map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton asChild isActive={pathname === item.url || pathname.startsWith(item.url + "/")}>
-                    <Link to={item.url} className="flex items-center gap-2">
+                    <Link to={item.url} onClick={closeOnMobile} className="flex items-center gap-2">
+
                       <item.icon className="h-4 w-4" />
                       {!collapsed && <span>{item.title}</span>}
                     </Link>
@@ -72,7 +74,7 @@ export function AppSidebar() {
                 {admin.map((item) => (
                   <SidebarMenuItem key={item.url}>
                     <SidebarMenuButton asChild isActive={pathname.startsWith(item.url)}>
-                      <Link to={item.url} className="flex items-center gap-2">
+                      <Link to={item.url} onClick={closeOnMobile} className="flex items-center gap-2">
                         <item.icon className="h-4 w-4" />
                         {!collapsed && <span>{item.title}</span>}
                       </Link>
