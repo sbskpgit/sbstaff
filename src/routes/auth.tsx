@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield } from "lucide-react";
 import { toast } from "sonner";
+import logoAsset from "@/assets/special-branch-logo.png.asset.json";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -52,7 +52,9 @@ function AuthPage() {
     <div className="min-h-screen grid lg:grid-cols-2">
       <div className="hidden lg:flex gradient-hero p-12 flex-col justify-between text-sidebar-foreground">
         <div className="flex items-center gap-3">
-          <div className="grid h-12 w-12 place-items-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground font-bold text-lg">SB</div>
+          <div className="grid h-14 w-14 place-items-center rounded-full bg-white p-1 ring-2 ring-white/30 overflow-hidden">
+            <img src={logoAsset.url} alt="Special Branch Punjab seal" className="h-full w-full object-contain rounded-full" />
+          </div>
           <div>
             <div className="text-lg font-bold">Special Branch</div>
             <div className="text-sm opacity-80">Sheikhupura Region</div>
@@ -75,8 +77,10 @@ function AuthPage() {
 
       <div className="flex items-center justify-center p-6 sm:p-12 bg-background">
         <div className="w-full max-w-md">
-          <div className="lg:hidden mb-6 flex items-center gap-2">
-            <Shield className="h-6 w-6 text-primary" />
+          <div className="lg:hidden mb-6 flex items-center gap-3">
+            <div className="grid h-12 w-12 place-items-center rounded-full bg-white p-0.5 ring-1 ring-border overflow-hidden">
+              <img src={logoAsset.url} alt="Special Branch Punjab seal" className="h-full w-full object-contain rounded-full" />
+            </div>
             <div>
               <div className="font-bold">Special Branch Sheikhupura</div>
               <div className="text-xs text-muted-foreground">Nafri Management</div>
