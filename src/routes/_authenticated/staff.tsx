@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { StaffPreviewDialog } from "@/components/staff-preview-dialog";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +33,8 @@ function StaffPage() {
   const pageSize = 25;
   const [editing, setEditing] = useState<Record<string, unknown> | null>(null);
   const [open, setOpen] = useState(false);
+  const [previewId, setPreviewId] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const { data: refs } = useQuery({
     queryKey: ["staff-refs"],
@@ -188,7 +191,7 @@ function StaffPage() {
                 <TableCell className="hidden md:table-cell text-sm">{labelOf(POSTING_TYPES, r.posting_type)}</TableCell>
                 <TableCell><StatusBadge status={r.duty_status} /></TableCell>
                 <TableCell className="text-right">
-                  <Button asChild variant="ghost" size="icon" title="View"><Link to="/staff/$id" params={{ id: r.id }}><Eye className="h-4 w-4" /></Link></Button>
+                  <Button variant="ghost" size="icon" title="Preview" onClick={() => { setPreviewId(r.id); setPreviewOpen(true); }}><Eye className="h-4 w-4" /></Button>
                   {canEdit && <Button variant="ghost" size="icon" onClick={() => { setEditing(r); setOpen(true); }} title="Edit"><Pencil className="h-4 w-4" /></Button>}
                   {isSuperAdmin && <Button variant="ghost" size="icon" onClick={() => del(r.id, r.full_name)} title="Delete"><Trash2 className="h-4 w-4 text-destructive" /></Button>}
                 </TableCell>
@@ -207,6 +210,7 @@ function StaffPage() {
       </div>
 
       <StaffFormDialog open={open} onOpenChange={setOpen} initial={editing as never} onSaved={() => refetch()} />
+      <StaffPreviewDialog staffId={previewId} open={previewOpen} onOpenChange={setPreviewOpen} />
     </div>
   );
 }
