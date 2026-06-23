@@ -24,10 +24,11 @@ const admin = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
-  const collapsed = state === "collapsed";
+  const { state, isMobile, setOpenMobile } = useSidebar();
+  const collapsed = state === "collapsed" && !isMobile;
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   const { isSuperAdmin, signOut, user } = useAuth();
+  const closeOnMobile = () => { if (isMobile) setOpenMobile(false); };
 
   return (
     <Sidebar collapsible="icon">
