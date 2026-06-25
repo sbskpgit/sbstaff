@@ -133,6 +133,33 @@ function AuthPage() {
           </Tabs>
         </div>
       </div>
+
+      <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reset password</DialogTitle>
+            <DialogDescription>Enter your email and we will send a password reset link.</DialogDescription>
+          </DialogHeader>
+          {forgotSent ? (
+            <div className="space-y-4 py-4">
+              <p className="text-sm text-muted-foreground">If an account exists for <strong>{forgotEmail}</strong>, a reset link has been sent. Check your inbox.</p>
+              <DialogFooter>
+                <Button onClick={() => setForgotOpen(false)} className="w-full">Done</Button>
+              </DialogFooter>
+            </div>
+          ) : (
+            <form onSubmit={resetPassword} className="space-y-4 py-4">
+              <div>
+                <Label>Email</Label>
+                <Input type="email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required autoComplete="email" />
+              </div>
+              <DialogFooter>
+                <Button type="submit" disabled={forgotBusy} className="w-full">{forgotBusy ? "Sending..." : "Send reset link"}</Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
