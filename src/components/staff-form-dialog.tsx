@@ -93,7 +93,7 @@ export function StaffFormDialog({
       let photo_url = form.photo_url ?? null;
       if (photoFile) {
         const ext = photoFile.name.split(".").pop() ?? "jpg";
-        const path = `${crypto.randomUUID()}.${ext}`;
+        const path = `${form.district_id}/${crypto.randomUUID()}.${ext}`;
         const { error: upErr } = await supabase.storage.from("staff-photos").upload(path, photoFile, { upsert: true });
         if (upErr) throw upErr;
         photo_url = path;
