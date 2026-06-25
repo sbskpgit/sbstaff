@@ -12,4 +12,9 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Switch the build target from Cloudflare (Lovable default) to Vercel
+  // so `vite build` emits a .vercel/output/ that Vercel can serve.
+  nitro: {
+    preset: "vercel",
+  },
 });
