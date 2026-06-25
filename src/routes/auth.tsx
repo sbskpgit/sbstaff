@@ -53,6 +53,18 @@ function AuthPage() {
     else { toast.success("Account created. You can sign in now."); setTab("signin"); }
   };
 
+  const resetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail) return;
+    setForgotBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setForgotBusy(false);
+    if (error) toast.error(error.message);
+    else setForgotSent(true);
+  };
+
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       <div className="hidden lg:flex gradient-hero p-12 flex-col justify-between text-sidebar-foreground">
