@@ -115,6 +115,9 @@ function AuthPage() {
               <form onSubmit={signIn} className="space-y-3 mt-4">
                 <div><Label>Email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" /></div>
                 <div><Label>Password</Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" /></div>
+                <div className="flex justify-end">
+                  <button type="button" onClick={() => { setForgotOpen(true); setForgotEmail(email); setForgotSent(false); }} className="text-sm text-primary hover:underline">Forgot password?</button>
+                </div>
                 <Button type="submit" disabled={busy} className="w-full">{busy ? "Signing in..." : "Sign In"}</Button>
               </form>
             </TabsContent>
