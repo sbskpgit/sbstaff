@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import logoAsset from "@/assets/special-branch-logo.png.asset.json";
 
@@ -23,6 +24,10 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotBusy, setForgotBusy] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
 
   useEffect(() => {
     if (!loading && user) nav({ to: "/dashboard", replace: true });
@@ -46,6 +51,18 @@ function AuthPage() {
     setBusy(false);
     if (error) toast.error(error.message);
     else { toast.success("Account created. You can sign in now."); setTab("signin"); }
+  };
+
+  const resetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail) return;
+    setForgotBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setForgotBusy(false);
+    if (error) toast.error(error.message);
+    else setForgotSent(true);
   };
 
   return (
@@ -98,6 +115,9 @@ function AuthPage() {
               <form onSubmit={signIn} className="space-y-3 mt-4">
                 <div><Label>Email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" /></div>
                 <div><Label>Password</Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" /></div>
+                <div className="flex justify-end">
+                  <button type="button" onClick={() => { setForgotOpen(true); setForgotEmail(email); setForgotSent(false); }} className="text-sm text-primary hover:underline">Forgot password?</button>
+                </div>
                 <Button type="submit" disabled={busy} className="w-full">{busy ? "Signing in..." : "Sign In"}</Button>
               </form>
             </TabsContent>
@@ -113,6 +133,33 @@ function AuthPage() {
           </Tabs>
         </div>
       </div>
+
+      <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reset password</DialogTitle>
+            <DialogDescription>Enter your email and we will send a password reset link.</DialogDescription>
+          </DialogHeader>
+          {forgotSent ? (
+            <div className="space-y-4 py-4">
+              <p className="text-sm text-muted-foreground">If an account exists for <strong>{forgotEmail}</strong>, a reset link has been sent. Check your inbox.</p>
+              <DialogFooter>
+                <Button onClick={() => setForgotOpen(false)} className="w-full">Done</Button>
+              </DialogFooter>
+            </div>
+          ) : (
+            <form onSubmit={resetPassword} className="space-y-4 py-4">
+              <div>
+                <Label>Email</Label>
+                <Input type="email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required autoComplete="email" />
+              </div>
+              <DialogFooter>
+                <Button type="submit" disabled={forgotBusy} className="w-full">{forgotBusy ? "Sending..." : "Send reset link"}</Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
