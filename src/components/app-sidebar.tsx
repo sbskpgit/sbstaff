@@ -36,7 +36,7 @@ export function AppSidebar() {
       <SidebarHeader className="px-3 py-4">
         <div className="flex items-center gap-2">
           <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white p-0.5 ring-1 ring-sidebar-border overflow-hidden">
-            <img src={logoAsset.url} alt="Special Branch Punjab seal" className="h-full w-full object-contain rounded-full" />
+            <img src={getAssetUrl(logoAsset.url)} alt="Special Branch Punjab seal" className="h-full w-full object-contain rounded-full" />
           </div>
           {!collapsed && (
             <div className="min-w-0">
