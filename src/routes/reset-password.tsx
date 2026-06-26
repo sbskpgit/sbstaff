@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import logoAsset from "@/assets/special-branch-logo.png.asset.json";
+import { getAssetUrl } from "@/lib/utils";
 
 export const Route = createFileRoute("/reset-password")({
   ssr: false,
