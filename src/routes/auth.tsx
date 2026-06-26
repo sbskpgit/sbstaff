@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import logoAsset from "@/assets/special-branch-logo.png.asset.json";
+import { getAssetUrl } from "@/lib/utils";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -70,7 +71,7 @@ function AuthPage() {
       <div className="hidden lg:flex gradient-hero p-12 flex-col justify-between text-sidebar-foreground">
         <div className="flex items-center gap-3">
           <div className="grid h-14 w-14 place-items-center rounded-full bg-white p-1 ring-2 ring-white/30 overflow-hidden">
-            <img src={logoAsset.url} alt="Special Branch Punjab seal" className="h-full w-full object-contain rounded-full" />
+            <img src={getAssetUrl(logoAsset.url)} alt="Special Branch Punjab seal" className="h-full w-full object-contain rounded-full" />
           </div>
           <div>
             <div className="text-lg font-bold">Special Branch</div>
@@ -96,7 +97,7 @@ function AuthPage() {
         <div className="w-full max-w-md">
           <div className="lg:hidden mb-6 flex items-center gap-3">
             <div className="grid h-12 w-12 place-items-center rounded-full bg-white p-0.5 ring-1 ring-border overflow-hidden">
-              <img src={logoAsset.url} alt="Special Branch Punjab seal" className="h-full w-full object-contain rounded-full" />
+              <img src={getAssetUrl(logoAsset.url)} alt="Special Branch Punjab seal" className="h-full w-full object-contain rounded-full" />
             </div>
             <div>
               <div className="font-bold">Special Branch Sheikhupura</div>
