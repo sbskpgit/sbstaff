@@ -36,11 +36,13 @@ function OrgAdmin() {
           <TabsTrigger value="circles">Circles</TabsTrigger>
           <TabsTrigger value="stations">Police Stations</TabsTrigger>
           <TabsTrigger value="designations">Designations</TabsTrigger>
+          <TabsTrigger value="strength">Sanctioned Strength</TabsTrigger>
         </TabsList>
         <TabsContent value="branches"><BranchesPanel /></TabsContent>
         <TabsContent value="circles"><CirclesPanel /></TabsContent>
         <TabsContent value="stations"><StationsPanel /></TabsContent>
         <TabsContent value="designations"><DesignationsPanel /></TabsContent>
+        <TabsContent value="strength"><SanctionedStrengthPanel /></TabsContent>
       </Tabs>
     </div>
   );
