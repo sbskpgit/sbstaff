@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import logoAsset from "@/assets/special-branch-logo.png.asset.json";
+import { getAssetUrl } from "@/lib/utils";
 
 const main = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
