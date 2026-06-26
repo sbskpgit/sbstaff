@@ -71,7 +71,7 @@ function AuthPage() {
       <div className="hidden lg:flex gradient-hero p-12 flex-col justify-between text-sidebar-foreground">
         <div className="flex items-center gap-3">
           <div className="grid h-14 w-14 place-items-center rounded-full bg-white p-1 ring-2 ring-white/30 overflow-hidden">
-            <img src={logoAsset.url} alt="Special Branch Punjab seal" className="h-full w-full object-contain rounded-full" />
+            <img src={getAssetUrl(logoAsset.url)} alt="Special Branch Punjab seal" className="h-full w-full object-contain rounded-full" />
           </div>
           <div>
             <div className="text-lg font-bold">Special Branch</div>
