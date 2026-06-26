@@ -219,3 +219,81 @@ function DesignationsPanel() {
     </div>
   );
 }
+
+function SanctionedStrengthPanel() {
+  const qc = useQueryClient();
+  const [districtId, setDistrictId] = useState<string>("__region__");
+  const [designationId, setDesignationId] = useState("");
+  const [count, setCount] = useState("");
+  const [remarks, setRemarks] = useState("");
+  const { data } = useQuery({
+    queryKey: ["org-sanctioned"],
+    queryFn: async () => {
+      const [s, d, g] = await Promise.all([
+        supabase.from("sanctioned_strength").select("id, district_id, designation_id, sanctioned_count, remarks").order("created_at", { ascending: false }),
+        supabase.from("districts").select("id, name").order("display_order"),
+        supabase.from("designations").select("id, name, bps").order("display_order"),
+      ]);
+      return {
+        rows: s.data ?? [],
+        districts: d.data ?? [],
+        designations: g.data ?? [],
+        dMap: new Map((d.data ?? []).map((x) => [x.id, x.name])),
+        gMap: new Map((g.data ?? []).map((x) => [x.id, x.name])),
+      };
+    },
+  });
+  const add = async () => {
+    if (!designationId || !count) return toast.error("Designation and count required");
+    const payload = {
+      district_id: districtId === "__region__" ? null : districtId,
+      designation_id: designationId,
+      sanctioned_count: Number(count),
+      remarks: remarks || null,
+    };
+    const { error } = await supabase.from("sanctioned_strength").upsert(payload as never, { onConflict: "district_id,designation_id" } as never);
+    if (error) toast.error(error.message);
+    else { setCount(""); setRemarks(""); toast.success("Saved"); qc.invalidateQueries({ queryKey: ["org-sanctioned"] }); }
+  };
+  const del = async (id: string) => {
+    if (!confirm("Delete entry?")) return;
+    const { error } = await supabase.from("sanctioned_strength").delete().eq("id", id);
+    if (error) toast.error(error.message); else { toast.success("Deleted"); qc.invalidateQueries({ queryKey: ["org-sanctioned"] }); }
+  };
+  const total = (data?.rows ?? []).reduce((a, r) => a + (r.sanctioned_count ?? 0), 0);
+  return (
+    <div className="space-y-3 mt-4">
+      <div className="card-elevated p-3 grid sm:grid-cols-5 gap-2">
+        <div><Label className="text-xs text-muted-foreground">Scope</Label>
+          <Select value={districtId} onValueChange={setDistrictId}><SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__region__">Region (All)</SelectItem>
+              {data?.districts.map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div><Label className="text-xs text-muted-foreground">Designation</Label>
+          <Select value={designationId} onValueChange={setDesignationId}><SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
+            <SelectContent>{data?.designations.map((g) => <SelectItem key={g.id} value={g.id}>{g.name}{g.bps ? ` (BPS-${g.bps})` : ""}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <div><Label className="text-xs text-muted-foreground">Sanctioned Count</Label><Input className="mt-1" type="number" min={0} value={count} onChange={(e) => setCount(e.target.value)} /></div>
+        <div><Label className="text-xs text-muted-foreground">Remarks</Label><Input className="mt-1" value={remarks} onChange={(e) => setRemarks(e.target.value)} /></div>
+        <div className="flex items-end"><Button onClick={add}><Plus className="h-4 w-4 mr-1" />Save</Button></div>
+      </div>
+      <div className="text-xs text-muted-foreground px-1">Total sanctioned: <span className="font-semibold text-foreground">{total}</span></div>
+      <div className="card-elevated overflow-x-auto"><Table>
+        <TableHeader><TableRow><TableHead>Scope</TableHead><TableHead>Designation</TableHead><TableHead>Sanctioned</TableHead><TableHead>Remarks</TableHead><TableHead></TableHead></TableRow></TableHeader>
+        <TableBody>{data?.rows.map((r) => (
+          <TableRow key={r.id}>
+            <TableCell>{r.district_id ? (data.dMap.get(r.district_id) ?? "—") : <span className="font-medium">Region (All)</span>}</TableCell>
+            <TableCell>{data.gMap.get(r.designation_id) ?? "—"}</TableCell>
+            <TableCell className="font-semibold">{r.sanctioned_count}</TableCell>
+            <TableCell className="text-muted-foreground">{r.remarks ?? "—"}</TableCell>
+            <TableCell className="text-right"><Button size="icon" variant="ghost" onClick={() => del(r.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+          </TableRow>
+        ))}</TableBody>
+      </Table></div>
+    </div>
+  );
+}
