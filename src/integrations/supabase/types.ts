@@ -255,6 +255,51 @@ export type Database = {
         }
         Relationships: []
       }
+      sanctioned_strength: {
+        Row: {
+          created_at: string
+          designation_id: string
+          district_id: string | null
+          id: string
+          remarks: string | null
+          sanctioned_count: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          designation_id: string
+          district_id?: string | null
+          id?: string
+          remarks?: string | null
+          sanctioned_count?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          designation_id?: string
+          district_id?: string | null
+          id?: string
+          remarks?: string | null
+          sanctioned_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sanctioned_strength_designation_id_fkey"
+            columns: ["designation_id"]
+            isOneToOne: false
+            referencedRelation: "designations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sanctioned_strength_district_id_fkey"
+            columns: ["district_id"]
+            isOneToOne: false
+            referencedRelation: "districts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       staff: {
         Row: {
           attachment_details: string | null
