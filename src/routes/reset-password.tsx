@@ -58,7 +58,7 @@ function ResetPasswordPage() {
       <div className="w-full max-w-md">
         <div className="mb-6 flex items-center gap-3">
           <div className="grid h-12 w-12 place-items-center rounded-full bg-white p-0.5 ring-1 ring-border overflow-hidden">
-            <img src={logoAsset.url} alt="Special Branch Punjab seal" className="h-full w-full object-contain rounded-full" />
+            <img src={getAssetUrl(logoAsset.url)} alt="Special Branch Punjab seal" className="h-full w-full object-contain rounded-full" />
           </div>
           <div>
             <div className="font-bold">Special Branch Sheikhupura</div>
